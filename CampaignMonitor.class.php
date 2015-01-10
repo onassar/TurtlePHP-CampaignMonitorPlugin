@@ -50,6 +50,10 @@
         /**
          * _add
          *
+         * @note   The set_error_handler and retore_error_handler calls below
+         *         should allow the application logic to flow uninterrupted
+         * @note   201 status check is because CM sends a 201 upon successful
+         *         addition of an email address
          * @static
          * @access protected
          * @param  string $listId
@@ -68,7 +72,10 @@
             set_error_handler(function() {});
             $response = $wrapper->add($details);
             restore_error_handler();
-            if ((int) $response->http_status_code !== 201) {
+            if (
+                is_object($response)
+                && (int) $response->http_status_code !== 201
+            ) {
                 error_log(print_r($response, true));
                 return false;
             }
@@ -78,6 +85,10 @@
         /**
          * _remove
          *
+         * @note   The set_error_handler and retore_error_handler calls below
+         *         should allow the application logic to flow uninterrupted
+         * @note   200 status check is because CM sends a 201 upon successful
+         *         addition of an email address
          * @static
          * @access protected
          * @param  string $listId
@@ -96,7 +107,10 @@
             set_error_handler(function() {});
             $response = $wrapper->delete($email);
             restore_error_handler();
-            if ((int) $response->http_status_code !== 200) {
+            if (
+                is_object($response)
+                && (int) $response->http_status_code !== 200
+            ) {
                 error_log(print_r($response, true));
                 return false;
             }
