@@ -15,7 +15,15 @@
     if (class_exists('\\CS_REST_Subscribers') === false) {
         throw new \Exception(
             '*CS_REST_Subscribers* class required. Please see ' .
-            'https://github.com/Znarkus/postmark-php'
+            'https://github.com/campaignmonitor/createsend-php'
+        );
+    }
+
+    // dependency check
+    if (class_exists('\\CS_REST_Transactional_SmartEmail') === false) {
+        throw new \Exception(
+            '*CS_REST_Transactional_SmartEmail* class required. Please see ' .
+            'https://github.com/campaignmonitor/createsend-php'
         );
     }
 
@@ -118,6 +126,46 @@
         }
 
         /**
+         * _send
+         *
+         * @note   The set_error_handler and retore_error_handler calls below
+         *         should allow the application logic to flow uninterrupted
+         * @note   200 status check is because CM sends a 201 upon successful
+         *         addition of an email address
+         * @static
+         * @access protected
+         * @param  string $emailId
+         * @param  string $email
+         * @param  array $data
+         * @return CS_REST_Wrapper_Result|false
+         */
+        public static function _send($emailId, $email, array $data)
+        {
+            // Config
+            $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
+            $apiKey = $config['credentials']['apiKey'];
+            $auth = array('api_key' => $apiKey);
+            $wrapper = (new \CS_REST_Transactional_SmartEmail($emailId, $auth));
+            $message = array(
+                'To' => $email,
+                'Data' => $data
+            );
+
+            // Handle case where something (eg. connection) fails
+            set_error_handler(function() {});
+            $response = $wrapper->send($message);
+            restore_error_handler();
+            if (
+                is_object($response)
+                && (int) $response->http_status_code !== 202
+            ) {
+                error_log(print_r($response, true));
+                return false;
+            }
+            return $response;
+        }
+
+        /**
          * add
          *
          * @static
@@ -155,6 +203,21 @@
         }
 
         /**
+         * init
+         * 
+         * @access public
+         * @static
+         * @return void
+         */
+        public static function init()
+        {
+            if (is_null(self::$_initiated) === false) {
+                self::$_initiated = true;
+                require_once self::$_configPath;
+            }
+        }
+
+        /**
          * remove
          *
          * @static
@@ -178,18 +241,27 @@
         }
 
         /**
-         * init
+         * send
          * 
          * @access public
-         * @static
+         * @param  string $emailKey
+         * @param  string $email
+         * @param  array $data
          * @return void
          */
-        public static function init()
+        public static function send($emailKey, $email, array $data)
         {
-            if (is_null(self::$_initiated) === false) {
-                self::$_initiated = true;
-                require_once self::$_configPath;
+            $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
+            $apiKey = $config['credentials']['apiKey'];
+            $emailId = $config['emails'][$emailKey];
+            $response = self::_send($emailId, $email, $data);
+            if ($response === false) {
+                error_log(
+                    'Error when attempting to email *' . ($email) .
+                    '* from Campaign Monitor (id: ' . ($emailId) . ')'
+                );
             }
+            return $response;
         }
 
         /**
