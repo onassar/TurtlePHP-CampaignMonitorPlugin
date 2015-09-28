@@ -170,14 +170,19 @@
          *
          * @static
          * @access public
-         * @param  string $listKey
+         * @param  string|array $listKey Can be string, or array of strings for
+         *         key traversal
          * @param  array $details
          * @return CS_REST_Wrapper_Result|false
          */
         public static function add($listKey, array $details)
         {
             $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
-            $listId = $config['lists'][$listKey];
+            $lists = $config['lists'];
+            foreach ((array) $listKey as $key) {
+                $listId = $lists[$key];
+                $lists = $lists[$key];
+            }
             $data = array(
                 'EmailAddress' => $details['email'],
                 'Resubscribe' => true
@@ -222,14 +227,19 @@
          *
          * @static
          * @access public
-         * @param  string $listKey
+         * @param  string|array $listKey Can be string, or array of strings for
+         *         key traversal
          * @param  string $email
          * @return CS_REST_Wrapper_Result|false
          */
         public static function remove($listKey, $email)
         {
             $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
-            $listId = $config['lists'][$listKey];
+            $lists = $config['lists'];
+            foreach ((array) $listKey as $key) {
+                $listId = $lists[$key];
+                $lists = $lists[$key];
+            }
             $response = self::_remove($listId, $email);
             if ($response === false) {
                 error_log(
@@ -244,7 +254,8 @@
          * send
          * 
          * @access public
-         * @param  string $emailKey
+         * @param  string|array $emailKey Can be string, or array of strings for
+         *         key traversal
          * @param  string $email
          * @param  array $data
          * @return void
@@ -252,8 +263,11 @@
         public static function send($emailKey, $email, array $data)
         {
             $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
-            $apiKey = $config['credentials']['apiKey'];
-            $emailId = $config['emails'][$emailKey];
+            $emails = $config['emails'];
+            foreach ((array) $emailKey as $key) {
+                $emailId = $emails[$key];
+                $emails = $emails[$key];
+            }
             $response = self::_send($emailId, $email, $data);
             if ($response === false) {
                 error_log(
