@@ -257,10 +257,10 @@
          * @param  string|array $emailKey Can be string, or array of strings for
          *         key traversal
          * @param  string $email
-         * @param  array $data
+         * @param  array $data (default: array())
          * @return void
          */
-        public static function send($emailKey, $email, array $data)
+        public static function send($emailKey, $email, array $data = array())
         {
             $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
             $emails = $config['emails'];
