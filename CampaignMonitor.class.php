@@ -187,6 +187,15 @@
                 'EmailAddress' => $details['email'],
                 'Resubscribe' => true
             );
+            if (isset($details['custom'])) {
+                $data['CustomFields'] = array();
+                foreach ($details['custom'] as $key => $value) {
+                    $data['CustomFields'][] = array(
+                        'Key' => $key,
+                        'Value' => $value
+                    );
+                }
+            }
             if (isset($details['name'])) {
                 $data['Name'] = $details['name'];
             } else {
