@@ -56,6 +56,91 @@
         protected static $_initiated = false;
 
         /**
+         * _getResource
+         *
+         * @static
+         * @access protected
+         * @param  string $id
+         * @param  string $type
+         * @return CS_REST_Subscribers|
+         */
+        protected static function _getResource($id, $type)
+        {
+            $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
+            $apiKey = $config['credentials']['apiKey'];
+            $auth = array('api_key' => $apiKey);
+            if ($type === 'email') {
+                return new \CS_REST_Transactional_SmartEmail($id, $auth);
+            }
+            return new \CS_REST_Subscribers($id, $auth);
+        }
+
+        /**
+         * _getList
+         *
+         * @static
+         * @access protected
+         * @param  string|array $key
+         * @param  string $type (default: 'lists')
+         * @return string
+         */
+        protected static function _getList($key, $type = 'lists')
+        {
+            $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
+            $lists = $config[$type];
+            foreach ((array) $key as $sub) {
+                $id = $lists[$sub];
+                $lists = $lists[$sub];
+            }
+            return $id;
+        }
+
+        /**
+         * _format
+         *
+         * @static
+         * @access protected
+         * @param  array $subscriber
+         * @return array
+         */
+        protected static function _format(array $subscriber)
+        {
+            $formatted = array(
+                'EmailAddress' => $subscriber['email'],
+                'Resubscribe' => true
+            );
+            if (isset($subscriber['custom'])) {
+                $formatted['CustomFields'] = array();
+                foreach ($subscriber['custom'] as $key => $value) {
+                    if (is_array($value)) {
+                        foreach ($value as $subvalue) {
+                            $formatted['CustomFields'][] = array(
+                                'Key' => $key,
+                                'Value' => $subvalue
+                            );
+                        }
+                    } else {
+                        $formatted['CustomFields'][] = array(
+                            'Key' => $key,
+                            'Value' => $value
+                        );
+                    }
+                }
+            }
+            if (isset($subscriber['name'])) {
+                $formatted['Name'] = $subscriber['name'];
+            } else {
+                if (isset($subscriber['firstName'])) {
+                    $formatted['Name'] = $subscriber['firstName'];
+                }
+                if (isset($subscriber['lastName'])) {
+                    $formatted['Name'] .= ' ' . ($subscriber['lastName']);
+                }
+            }
+            return $formatted;
+        }
+
+        /**
          * _add
          *
          * @note   The set_error_handler and retore_error_handler calls below
@@ -64,21 +149,44 @@
          *         addition of an email address
          * @static
          * @access protected
-         * @param  string $listId
-         * @param  array $details
+         * @param  string $id
+         * @param  array $subscriber
          * @return CS_REST_Wrapper_Result|false
          */
-        public static function _add($listId, array $details)
+        protected static function _add($id, array $subscriber)
         {
-            // Config
-            $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
-            $apiKey = $config['credentials']['apiKey'];
-            $auth = array('api_key' => $apiKey);
-            $wrapper = (new \CS_REST_Subscribers($listId, $auth));
-
-            // Handle case where something (eg. connection) fails
+            $resource = self::_getResource($id, 'subscriber');
             set_error_handler(function() {});
-            $response = $wrapper->add($details);
+            $response = $resource->add($subscriber);
+            restore_error_handler();
+            if (
+                is_object($response)
+                && (int) $response->http_status_code !== 201
+            ) {
+                error_log(print_r($response, true));
+                return false;
+            }
+            return $response;
+        }
+
+        /**
+         * _import
+         *
+         * @note   The set_error_handler and retore_error_handler calls below
+         *         should allow the application logic to flow uninterrupted
+         * @note   201 status check is because CM sends a 201 upon successful
+         *         addition of an email address
+         * @static
+         * @access protected
+         * @param  string $id
+         * @param  array $subscribers
+         * @return CS_REST_Wrapper_Result|false
+         */
+        protected static function _import($id, array $subscribers)
+        {
+            $resource = self::_getResource($id, 'subscriber');
+            set_error_handler(function() {});
+            $response = $resource->import($subscribers, true);
             restore_error_handler();
             if (
                 is_object($response)
@@ -99,21 +207,15 @@
          *         addition of an email address
          * @static
          * @access protected
-         * @param  string $listId
+         * @param  string $id
          * @param  string $email
          * @return CS_REST_Wrapper_Result|false
          */
-        public static function _remove($listId, $email)
+        protected static function _remove($id, $email)
         {
-            // Config
-            $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
-            $apiKey = $config['credentials']['apiKey'];
-            $auth = array('api_key' => $apiKey);
-            $wrapper = (new \CS_REST_Subscribers($listId, $auth));
-
-            // Handle case where something (eg. connection) fails
+            $resource = self::_getResource($id, 'subscriber');
             set_error_handler(function() {});
-            $response = $wrapper->delete($email);
+            $response = $resource->delete($email);
             restore_error_handler();
             if (
                 is_object($response)
@@ -134,26 +236,20 @@
          *         addition of an email address
          * @static
          * @access protected
-         * @param  string $emailId
+         * @param  string $id
          * @param  string $email
          * @param  array $data
          * @return CS_REST_Wrapper_Result|false
          */
-        public static function _send($emailId, $email, array $data)
+        protected static function _send($id, $email, array $data)
         {
-            // Config
-            $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
-            $apiKey = $config['credentials']['apiKey'];
-            $auth = array('api_key' => $apiKey);
-            $wrapper = (new \CS_REST_Transactional_SmartEmail($emailId, $auth));
+            $resource = self::_getResource($id, 'email');
             $message = array(
                 'To' => $email,
                 'Data' => $data
             );
-
-            // Handle case where something (eg. connection) fails
             set_error_handler(function() {});
-            $response = $wrapper->send($message);
+            $response = $resource->send($message);
             restore_error_handler();
             if (
                 is_object($response)
@@ -166,51 +262,79 @@
         }
 
         /**
+         * _update
+         *
+         * @note   The set_error_handler and retore_error_handler calls below
+         *         should allow the application logic to flow uninterrupted
+         * @note   200 status check is because CM sends a 200 upon successful
+         *         update of an email address
+         * @static
+         * @access protected
+         * @param  string $id
+         * @param  string $email
+         * @param  array $subscriber
+         * @return CS_REST_Wrapper_Result|false
+         */
+        protected static function _update($id, $email, array $subscriber)
+        {
+            $resource = self::_getResource($id, 'subscriber');
+            set_error_handler(function() {});
+            $response = $resource->update($email, $subscriber);
+            restore_error_handler();
+            if (
+                is_object($response)
+                && (int) $response->http_status_code !== 200
+            ) {
+                error_log(print_r($response, true));
+                return false;
+            }
+            return $response;
+        }
+
+        /**
          * add
          *
          * @static
          * @access public
-         * @param  string|array $listKey Can be string, or array of strings for
-         *         key traversal
-         * @param  array $details
+         * @param  string|array $key
+         * @param  array $subscriber
          * @return CS_REST_Wrapper_Result|false
          */
-        public static function add($listKey, array $details)
+        public static function add($key, array $subscriber)
         {
-            $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
-            $lists = $config['lists'];
-            foreach ((array) $listKey as $key) {
-                $listId = $lists[$key];
-                $lists = $lists[$key];
+            $id = self::_getList($key);
+            $subscriber = self::_format($subscriber);
+            $response = self::_add($id, $data);
+            if ($response === false) {
+                $email = $subscriber['EmailAddress'];
+                error_log(
+                    'Error when attempting to add *' . ($email) . '* to ' .
+                    'Campaign Monitor (list: ' . ($id) . ')'
+                );
             }
-            $data = array(
-                'EmailAddress' => $details['email'],
-                'Resubscribe' => true
-            );
-            if (isset($details['custom'])) {
-                $data['CustomFields'] = array();
-                foreach ($details['custom'] as $key => $value) {
-                    $data['CustomFields'][] = array(
-                        'Key' => $key,
-                        'Value' => $value
-                    );
-                }
+            return $response;
+        }
+
+        /**
+         * import
+         *
+         * @static
+         * @access public
+         * @param  string|array $key
+         * @param  array $subscribers
+         * @return CS_REST_Wrapper_Result|false
+         */
+        public static function import($key, $subscribers)
+        {
+            $id = self::_getList($key);
+            foreach ($subscribers as &$subscriber) {
+                $subscriber = self::_format($subscriber);
             }
-            if (isset($details['name'])) {
-                $data['Name'] = $details['name'];
-            } else {
-                if (isset($details['firstName'])) {
-                    $data['Name'] = $details['firstName'];
-                }
-                if (isset($details['lastName'])) {
-                    $data['Name'] .= ' ' . ($details['lastName']);
-                }
-            }
-            $response = self::_add($listId, $data);
+            $response = self::_import($id, $subscribers);
             if ($response === false) {
                 error_log(
-                    'Error when attempting to add *' . ($details['email']) .
-                    '* to Campaign Monitor (list: ' . ($listId) . ')'
+                    'Error when attempting to import to Campaign Monitor ' .
+                    '(list: ' . ($id) . ')'
                 );
             }
             return $response;
@@ -236,24 +360,18 @@
          *
          * @static
          * @access public
-         * @param  string|array $listKey Can be string, or array of strings for
-         *         key traversal
+         * @param  string|array $key
          * @param  string $email
          * @return CS_REST_Wrapper_Result|false
          */
-        public static function remove($listKey, $email)
+        public static function remove($key, $email)
         {
-            $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
-            $lists = $config['lists'];
-            foreach ((array) $listKey as $key) {
-                $listId = $lists[$key];
-                $lists = $lists[$key];
-            }
-            $response = self::_remove($listId, $email);
+            $id = self::_getList($key);
+            $response = self::_remove($id, $email);
             if ($response === false) {
                 error_log(
                     'Error when attempting to remove *' . ($email) .
-                    '* from Campaign Monitor (list: ' . ($listId) . ')'
+                    '* from Campaign Monitor (list: ' . ($id) . ')'
                 );
             }
             return $response;
@@ -263,25 +381,43 @@
          * send
          * 
          * @access public
-         * @param  string|array $emailKey Can be string, or array of strings for
-         *         key traversal
+         * @param  string|array $key
          * @param  string $email
          * @param  array $data (default: array())
-         * @return void
+         * @return CS_REST_Wrapper_Result|false
          */
-        public static function send($emailKey, $email, array $data = array())
+        public static function send($key, $email, array $data = array())
         {
-            $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
-            $emails = $config['emails'];
-            foreach ((array) $emailKey as $key) {
-                $emailId = $emails[$key];
-                $emails = $emails[$key];
-            }
-            $response = self::_send($emailId, $email, $data);
+            $id = self::_getList($key, 'emails');
+            $response = self::_send($id, $email, $data);
             if ($response === false) {
                 error_log(
-                    'Error when attempting to email *' . ($email) .
-                    '* from Campaign Monitor (id: ' . ($emailId) . ')'
+                    'Error when attempting to email *' . ($email) . '* from ' .
+                    'Campaign Monitor (id: ' . ($id) . ')'
+                );
+            }
+            return $response;
+        }
+
+        /**
+         * update
+         *
+         * @static
+         * @access public
+         * @param  string|array $key
+         * @param  string $email
+         * @param  array $subscriber
+         * @return CS_REST_Wrapper_Result|false
+         */
+        public static function update($key, $email, array $subscriber)
+        {
+            $id = self::_getList($key);
+            $subscriber = self::_format($subscriber);
+            $response = self::_update($id, $email, $subscriber);
+            if ($response === false) {
+                error_log(
+                    'Error when attempting to update *' . ($email) . '* to ' .
+                    'Campaign Monitor (list: ' . ($id) . ')'
                 );
             }
             return $response;
