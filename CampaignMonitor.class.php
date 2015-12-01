@@ -304,7 +304,7 @@
         {
             $id = self::_getList($key);
             $subscriber = self::_format($subscriber);
-            $response = self::_add($id, $data);
+            $response = self::_add($id, $subscriber);
             if ($response === false) {
                 $email = $subscriber['EmailAddress'];
                 error_log(
