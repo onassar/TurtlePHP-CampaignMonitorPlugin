@@ -20,6 +20,14 @@
     }
 
     // dependency check
+    if (class_exists('\\CS_REST_Lists') === false) {
+        throw new \Exception(
+            '*CS_REST_Lists* class required. Please see ' .
+            'https://github.com/campaignmonitor/createsend-php'
+        );
+    }
+
+    // dependency check
     if (class_exists('\\CS_REST_Transactional_SmartEmail') === false) {
         throw new \Exception(
             '*CS_REST_Transactional_SmartEmail* class required. Please see ' .
@@ -400,6 +408,18 @@
         }
 
         /**
+         * setConfigPath
+         * 
+         * @access public
+         * @param  string $path
+         * @return void
+         */
+        public static function setConfigPath($path)
+        {
+            self::$_configPath = $path;
+        }
+
+        /**
          * update
          *
          * @static
@@ -424,15 +444,33 @@
         }
 
         /**
-         * setConfigPath
-         * 
+         * webhooks
+         *
+         * Loops over webhooks and removes any previously added. Then adds those
+         * stored in config.
+         *
+         * @static
          * @access public
-         * @param  string $path
          * @return void
          */
-        public static function setConfigPath($path)
+        public static function webhooks()
         {
-            self::$_configPath = $path;
+            $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
+            $collection = $config['webhooks'];
+            $key = $config['credentials']['apiKey'];
+            $auth = array('api_key' => $key);
+            foreach ($collection as $list => $webhooks) {
+                $list = self::_getList($list);
+                $list = new \CS_REST_Lists($list, $auth);
+                $already = $list->get_webhooks();
+                foreach ($already->response as $webhook) {
+                    $id = $webhook->WebhookID;
+                    $list->delete_webhook($id);
+                }
+                foreach ($webhooks as $webhook) {
+                    $list->create_webhook($webhook);
+                }
+            }
         }
     }
 
