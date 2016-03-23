@@ -217,9 +217,10 @@
          * @access protected
          * @param  string $id
          * @param  string $email
+         * @param  boolean $verbose (default: true)
          * @return CS_REST_Wrapper_Result|false
          */
-        protected static function _remove($id, $email)
+        protected static function _remove($id, $email, $verbose = true)
         {
             $resource = self::_getResource($id, 'subscriber');
             set_error_handler(function() {});
@@ -228,6 +229,7 @@
             if (
                 is_object($response)
                 && (int) $response->http_status_code !== 200
+                && $verbose === true
             ) {
                 error_log(print_r($response, true));
                 return false;
@@ -370,13 +372,14 @@
          * @access public
          * @param  string|array $key
          * @param  string $email
+         * @param  boolean $verbose (default: true)
          * @return CS_REST_Wrapper_Result|false
          */
-        public static function remove($key, $email)
+        public static function remove($key, $email, $verbose = true)
         {
             $id = self::_getList($key);
-            $response = self::_remove($id, $email);
-            if ($response === false) {
+            $response = self::_remove($id, $email, $verbose);
+            if ($response === false && $verbose === true) {
                 error_log(
                     'Error when attempting to remove *' . ($email) .
                     '* from Campaign Monitor (list: ' . ($id) . ')'
