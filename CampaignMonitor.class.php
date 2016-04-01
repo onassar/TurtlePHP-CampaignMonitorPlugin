@@ -12,6 +12,14 @@
     }
 
     // dependency check
+    if (class_exists('\\CS_REST_Clients') === false) {
+        throw new \Exception(
+            '*CS_REST_Clients* class required. Please see ' .
+            'https://github.com/campaignmonitor/createsend-php'
+        );
+    }
+
+    // dependency check
     if (class_exists('\\CS_REST_Subscribers') === false) {
         throw new \Exception(
             '*CS_REST_Subscribers* class required. Please see ' .
@@ -68,17 +76,20 @@
          *
          * @static
          * @access protected
-         * @param  string $id
          * @param  string $type
+         * @param  false|string $id (default: false)
          * @return CS_REST_Subscribers|
          */
-        protected static function _getResource($id, $type)
+        protected static function _getResource($type, $id = false)
         {
             $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
             $apiKey = $config['credentials']['apiKey'];
+            $clientId = $config['credentials']['clientId'];
             $auth = array('api_key' => $apiKey);
             if ($type === 'email') {
                 return new \CS_REST_Transactional_SmartEmail($id, $auth);
+            } elseif ($type === 'client') {
+                return new \CS_REST_Clients($clientId, $auth);
             }
             return new \CS_REST_Subscribers($id, $auth);
         }
@@ -159,11 +170,11 @@
          * @access protected
          * @param  string $id
          * @param  array $subscriber
-         * @return CS_REST_Wrapper_Result|false
+         * @return false|CS_REST_Wrapper_Result
          */
         protected static function _add($id, array $subscriber)
         {
-            $resource = self::_getResource($id, 'subscriber');
+            $resource = self::_getResource('subscriber', $id);
             set_error_handler(function() {});
             $response = $resource->add($subscriber);
             restore_error_handler();
@@ -172,6 +183,34 @@
                 && (int) $response->http_status_code !== 201
             ) {
                 error_log(print_r($response, true));
+                return false;
+            }
+            return $response;
+        }
+
+        /**
+         * _details
+         *
+         * @static
+         * @access protected
+         * @param  string $id
+         * @param  string $email
+         * @param  boolean $verbose (default: true)
+         * @return false|CS_REST_Wrapper_Result
+         */
+        protected static function _details($id, $email, $verbose = true)
+        {
+            $resource = self::_getResource('subscriber', $id);
+            set_error_handler(function() {});
+            $response = $resource->get($email);
+            restore_error_handler();
+            if (
+                is_object($response)
+                && (int) $response->http_status_code !== 200
+            ) {
+                if ($verbose === true) {
+                    error_log(print_r($response, true));
+                }
                 return false;
             }
             return $response;
@@ -188,11 +227,11 @@
          * @access protected
          * @param  string $id
          * @param  array $subscribers
-         * @return CS_REST_Wrapper_Result|false
+         * @return false|CS_REST_Wrapper_Result
          */
         protected static function _import($id, array $subscribers)
         {
-            $resource = self::_getResource($id, 'subscriber');
+            $resource = self::_getResource('subscriber', $id);
             set_error_handler(function() {});
             $response = $resource->import($subscribers, true);
             restore_error_handler();
@@ -218,20 +257,21 @@
          * @param  string $id
          * @param  string $email
          * @param  boolean $verbose (default: true)
-         * @return CS_REST_Wrapper_Result|false
+         * @return false|CS_REST_Wrapper_Result
          */
         protected static function _remove($id, $email, $verbose = true)
         {
-            $resource = self::_getResource($id, 'subscriber');
+            $resource = self::_getResource('subscriber', $id);
             set_error_handler(function() {});
             $response = $resource->delete($email);
             restore_error_handler();
             if (
                 is_object($response)
                 && (int) $response->http_status_code !== 200
-                && $verbose === true
             ) {
-                error_log(print_r($response, true));
+                if ($verbose === true) {
+                    error_log(print_r($response, true));
+                }
                 return false;
             }
             return $response;
@@ -249,11 +289,11 @@
          * @param  string $id
          * @param  string $email
          * @param  array $data
-         * @return CS_REST_Wrapper_Result|false
+         * @return false|CS_REST_Wrapper_Result
          */
         protected static function _send($id, $email, array $data)
         {
-            $resource = self::_getResource($id, 'email');
+            $resource = self::_getResource('email', $id);
             $message = array(
                 'To' => $email,
                 'Data' => $data
@@ -272,6 +312,92 @@
         }
 
         /**
+         * _suppress
+         *
+         * @static
+         * @access protected
+         * @param  string|array $emails
+         * @param  boolean $verbose (default: true)
+         * @return false|CS_REST_Wrapper_Result
+         */
+        protected static function _suppress($emails, $verbose = true)
+        {
+            $resource = self::_getResource('client');
+            set_error_handler(function() {});
+            $response = $resource->suppress((array) $emails);
+            restore_error_handler();
+            if (
+                is_object($response)
+                && (int) $response->http_status_code !== 200
+            ) {
+                if ($verbose === true) {
+                    error_log(print_r($response, true));
+                }
+                return false;
+            }
+            return $response;
+        }
+
+        /**
+         * _unsubscribe
+         *
+         * @note   The set_error_handler and retore_error_handler calls below
+         *         should allow the application logic to flow uninterrupted
+         * @note   200 status check is because CM sends a 201 upon successful
+         *         addition of an email address
+         * @static
+         * @access protected
+         * @param  string $id
+         * @param  string $email
+         * @param  boolean $verbose (default: true)
+         * @return false|CS_REST_Wrapper_Result
+         */
+        protected static function _unsubscribe($id, $email, $verbose = true)
+        {
+            $resource = self::_getResource('subscriber', $id);
+            set_error_handler(function() {});
+            $response = $resource->unsubscribe($email);
+            restore_error_handler();
+            if (
+                is_object($response)
+                && (int) $response->http_status_code !== 200
+            ) {
+                if ($verbose === true) {
+                    error_log(print_r($response, true));
+                }
+                return false;
+            }
+            return $response;
+        }
+
+        /**
+         * _unsuppress
+         *
+         * @static
+         * @access protected
+         * @param  string|array $emails
+         * @param  boolean $verbose (default: true)
+         * @return false|CS_REST_Wrapper_Result
+         */
+        protected static function _unsuppress($emails, $verbose = true)
+        {
+            $resource = self::_getResource('client');
+            set_error_handler(function() {});
+            $response = $resource->unsuppress((array) $emails);
+            restore_error_handler();
+            if (
+                is_object($response)
+                && (int) $response->http_status_code !== 200
+            ) {
+                if ($verbose === true) {
+                    error_log(print_r($response, true));
+                }
+                return false;
+            }
+            return $response;
+        }
+
+        /**
          * _update
          *
          * @note   The set_error_handler and retore_error_handler calls below
@@ -283,11 +409,11 @@
          * @param  string $id
          * @param  string $email
          * @param  array $subscriber
-         * @return CS_REST_Wrapper_Result|false
+         * @return false|CS_REST_Wrapper_Result
          */
         protected static function _update($id, $email, array $subscriber)
         {
-            $resource = self::_getResource($id, 'subscriber');
+            $resource = self::_getResource('subscriber', $id);
             set_error_handler(function() {});
             $response = $resource->update($email, $subscriber);
             restore_error_handler();
@@ -308,7 +434,7 @@
          * @access public
          * @param  string|array $key
          * @param  array $subscriber
-         * @return CS_REST_Wrapper_Result|false
+         * @return false|CS_REST_Wrapper_Result
          */
         public static function add($key, array $subscriber)
         {
@@ -326,13 +452,36 @@
         }
 
         /**
+         * details
+         *
+         * @static
+         * @access public
+         * @param  string|array $key
+         * @param  string $email
+         * @param  boolean $verbose (default: true)
+         * @return false|CS_REST_Wrapper_Result
+         */
+        public static function details($key, $email, $verbose = true)
+        {
+            $id = self::_getList($key);
+            $response = self::_details($id, $email, $verbose);
+            if ($response === false && $verbose === true) {
+                error_log(
+                    'Error when attempting to get details for *' . ($email) .
+                    '* from Campaign Monitor (list: ' . ($id) . ')'
+                );
+            }
+            return $response;
+        }
+
+        /**
          * import
          *
          * @static
          * @access public
          * @param  string|array $key
          * @param  array $subscribers
-         * @return CS_REST_Wrapper_Result|false
+         * @return false|CS_REST_Wrapper_Result
          */
         public static function import($key, $subscribers)
         {
@@ -373,7 +522,7 @@
          * @param  string|array $key
          * @param  string $email
          * @param  boolean $verbose (default: true)
-         * @return CS_REST_Wrapper_Result|false
+         * @return false|CS_REST_Wrapper_Result
          */
         public static function remove($key, $email, $verbose = true)
         {
@@ -395,7 +544,7 @@
          * @param  string|array $key
          * @param  string $email
          * @param  array $data (default: array())
-         * @return CS_REST_Wrapper_Result|false
+         * @return false|CS_REST_Wrapper_Result
          */
         public static function send($key, $email, array $data = array())
         {
@@ -423,6 +572,92 @@
         }
 
         /**
+         * subscribe
+         *
+         * @static
+         * @access public
+         * @param  string $email
+         * @param  boolean $verbose (default: true)
+         * @return false|CS_REST_Wrapper_Result
+         */
+        public static function subscribe($email, $verbose = true)
+        {
+            $response = self::_suppress($email, $verbose);
+            if ($response === false && $verbose === true) {
+                error_log(
+                    'Error when attempting to suppress *' . ($email) .
+                    '* from Campaign Monitor'
+                );
+            }
+            return $response;
+        }
+
+        /**
+         * suppress
+         *
+         * @static
+         * @access public
+         * @param  string $email
+         * @param  boolean $verbose (default: true)
+         * @return false|CS_REST_Wrapper_Result
+         */
+        public static function suppress($email, $verbose = true)
+        {
+            $response = self::_suppress($email, $verbose);
+            if ($response === false && $verbose === true) {
+                error_log(
+                    'Error when attempting to suppress *' . ($email) .
+                    '* from Campaign Monitor'
+                );
+            }
+            return $response;
+        }
+
+        /**
+         * unsubscribe
+         *
+         * @static
+         * @access public
+         * @param  string|array $key
+         * @param  string $email
+         * @param  boolean $verbose (default: true)
+         * @return false|CS_REST_Wrapper_Result
+         */
+        public static function unsubscribe($key, $email, $verbose = true)
+        {
+            $id = self::_getList($key);
+            $response = self::_unsubscribe($id, $email, $verbose);
+            if ($response === false && $verbose === true) {
+                error_log(
+                    'Error when attempting to unsubscribe *' . ($email) .
+                    '* from Campaign Monitor (list: ' . ($id) . ')'
+                );
+            }
+            return $response;
+        }
+
+        /**
+         * unsuppress
+         *
+         * @static
+         * @access public
+         * @param  string $email
+         * @param  boolean $verbose (default: true)
+         * @return false|CS_REST_Wrapper_Result
+         */
+        public static function unsuppress($email, $verbose = true)
+        {
+            $response = self::_unsuppress($email, $verbose);
+            if ($response === false && $verbose === true) {
+                error_log(
+                    'Error when attempting to unsuppress *' . ($email) .
+                    '* from Campaign Monitor'
+                );
+            }
+            return $response;
+        }
+
+        /**
          * update
          *
          * @static
@@ -430,7 +665,7 @@
          * @param  string|array $key
          * @param  string $email
          * @param  array $subscriber
-         * @return CS_REST_Wrapper_Result|false
+         * @return false|CS_REST_Wrapper_Result
          */
         public static function update($key, $email, array $subscriber)
         {
