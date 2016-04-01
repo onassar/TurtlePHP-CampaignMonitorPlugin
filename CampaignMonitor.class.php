@@ -120,13 +120,16 @@
          * @static
          * @access protected
          * @param  array $subscriber
+         * @param  boolean $resubscribe (default: true)
          * @return array
          */
-        protected static function _format(array $subscriber)
-        {
+        protected static function _format(
+            array $subscriber,
+            $resubscribe = true
+        ) {
             $formatted = array(
                 'EmailAddress' => $subscriber['email'],
-                'Resubscribe' => true
+                'Resubscribe' => $resubscribe
             );
             if (isset($subscriber['custom'])) {
                 $formatted['CustomFields'] = array();
@@ -227,13 +230,14 @@
          * @access protected
          * @param  string $id
          * @param  array $subscribers
+         * @param  boolean $resubscribe
          * @return false|CS_REST_Wrapper_Result
          */
-        protected static function _import($id, array $subscribers)
+        protected static function _import($id, array $subscribers, $resubscribe)
         {
             $resource = self::_getResource('subscriber', $id);
             set_error_handler(function() {});
-            $response = $resource->import($subscribers, true);
+            $response = $resource->import($subscribers, $resubscribe);
             restore_error_handler();
             if (
                 is_object($response)
@@ -375,15 +379,15 @@
          *
          * @static
          * @access protected
-         * @param  string|array $emails
+         * @param  string $email
          * @param  boolean $verbose (default: true)
          * @return false|CS_REST_Wrapper_Result
          */
-        protected static function _unsuppress($emails, $verbose = true)
+        protected static function _unsuppress($email, $verbose = true)
         {
             $resource = self::_getResource('client');
             set_error_handler(function() {});
-            $response = $resource->unsuppress((array) $emails);
+            $response = $resource->unsuppress($email);
             restore_error_handler();
             if (
                 is_object($response)
@@ -481,15 +485,16 @@
          * @access public
          * @param  string|array $key
          * @param  array $subscribers
+         * @param  boolean $resubscribe (default: true)
          * @return false|CS_REST_Wrapper_Result
          */
-        public static function import($key, $subscribers)
+        public static function import($key, $subscribers, $resubscribe = true)
         {
             $id = self::_getList($key);
             foreach ($subscribers as &$subscriber) {
                 $subscriber = self::_format($subscriber);
             }
-            $response = self::_import($id, $subscribers);
+            $response = self::_import($id, $subscribers, $resubscribe);
             if ($response === false) {
                 error_log(
                     'Error when attempting to import to Campaign Monitor ' .
@@ -665,12 +670,17 @@
          * @param  string|array $key
          * @param  string $email
          * @param  array $subscriber
+         * @param  boolean $resubscribe (default: true)
          * @return false|CS_REST_Wrapper_Result
          */
-        public static function update($key, $email, array $subscriber)
-        {
+        public static function update(
+            $key,
+            $email,
+            array $subscriber,
+            $resubscribe = true
+        ) {
             $id = self::_getList($key);
-            $subscriber = self::_format($subscriber);
+            $subscriber = self::_format($subscriber, $resubscribe);
             $response = self::_update($id, $email, $subscriber);
             if ($response === false) {
                 error_log(
