@@ -711,6 +711,7 @@
                 $list = self::_getList($list);
                 $list = new \CS_REST_Lists($list, $auth);
                 $already = $list->get_webhooks();
+el(pr($already, true));
                 foreach ($already->response as $webhook) {
                     $id = $webhook->WebhookID;
                     $list->delete_webhook($id);
