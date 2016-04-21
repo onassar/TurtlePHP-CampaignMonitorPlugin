@@ -695,7 +695,9 @@
          * webhooks
          *
          * Loops over webhooks and removes any previously added. Then adds those
-         * stored in config.
+         * stored in config. I check for an empty response because when CM is
+         * down, response is empty. So don't do anything drastic when that is
+         * the case.
          *
          * @static
          * @access public
@@ -711,13 +713,14 @@
                 $list = self::_getList($list);
                 $list = new \CS_REST_Lists($list, $auth);
                 $already = $list->get_webhooks();
-el(pr($already, true));
-                foreach ($already->response as $webhook) {
-                    $id = $webhook->WebhookID;
-                    $list->delete_webhook($id);
-                }
-                foreach ($webhooks as $webhook) {
-                    $list->create_webhook($webhook);
+                if ($already->response !== '') {
+                    foreach ($already->response as $webhook) {
+                        $id = $webhook->WebhookID;
+                        $list->delete_webhook($id);
+                    }
+                    foreach ($webhooks as $webhook) {
+                        $list->create_webhook($webhook);
+                    }
                 }
             }
         }
