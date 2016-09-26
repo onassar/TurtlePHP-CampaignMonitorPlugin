@@ -231,13 +231,22 @@
          * @param  string $id
          * @param  array $subscribers
          * @param  boolean $resubscribe
+         * @param  boolean $queueSubscriptionBasedAutoResponders
          * @return false|CS_REST_Wrapper_Result
          */
-        protected static function _import($id, array $subscribers, $resubscribe)
-        {
+        protected static function _import(
+            $id,
+            array $subscribers,
+            $resubscribe,
+            $queueSubscriptionBasedAutoResponders
+        ) {
             $resource = self::_getResource('subscriber', $id);
             set_error_handler(function() {});
-            $response = $resource->import($subscribers, $resubscribe);
+            $response = $resource->import(
+                $subscribers,
+                $resubscribe,
+                $queueSubscriptionBasedAutoResponders
+            );
             restore_error_handler();
             if (
                 is_object($response)
@@ -486,15 +495,25 @@
          * @param  string|array $key
          * @param  array $subscribers
          * @param  boolean $resubscribe (default: true)
+         * @param  boolean $queueSubscriptionBasedAutoResponders (default: false)
          * @return false|CS_REST_Wrapper_Result
          */
-        public static function import($key, $subscribers, $resubscribe = true)
-        {
+        public static function import(
+            $key,
+            array $subscribers,
+            $resubscribe = true,
+            $queueSubscriptionBasedAutoResponders = false
+        ) {
             $id = self::_getList($key);
             foreach ($subscribers as &$subscriber) {
                 $subscriber = self::_format($subscriber);
             }
-            $response = self::_import($id, $subscribers, $resubscribe);
+            $response = self::_import(
+                $id,
+                $subscribers,
+                $resubscribe,
+                $queueSubscriptionBasedAutoResponders
+            );
             if ($response === false) {
                 error_log(
                     'Error when attempting to import to Campaign Monitor ' .
