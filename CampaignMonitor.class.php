@@ -72,27 +72,6 @@
         protected static $_initiated = false;
 
         /**
-         * _cleanJson
-         *
-         * @see    http://stackoverflow.com/questions/17219916/json-decode-returns-json-error-syntax-but-online-formatter-says-the-json-is-ok
-         * @static
-         * @access protected
-         * @param  string $str
-         * @return string
-         */
-        protected static function _cleanJson($str)
-        {
-            for ($i = 0; $i <= 31; ++$i) {
-                $str = str_replace(chr($i), '', $str);
-            }
-            $str = str_replace(chr(127), '', $str);
-            if (0 === strpos(bin2hex($str), 'efbbbf')) {
-                $str = substr($str, 3);
-            }
-            return $str;
-        }
-
-        /**
          * _getResource
          *
          * @static
@@ -754,9 +733,7 @@
                 $list = new \CS_REST_Lists($list, $auth);
                 $already = $list->get_webhooks();
                 if ($already->response !== '') {
-                    $webhooks = $already->response;
-                    $webhooks = json_decode(self::_cleanJson($webhooks));
-                    foreach ($webhooks as $webhook) {
+                    foreach ($already->response as $webhook) {
                         $id = $webhook->WebhookID;
                         $list->delete_webhook($id);
                     }
