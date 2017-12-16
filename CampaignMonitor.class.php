@@ -56,8 +56,8 @@
         /**
          * _configPath
          *
-         * @var    string
-         * @access protected
+         * @var     string
+         * @access  protected
          * @static
          */
         protected static $_configPath = 'config.default.inc.php';
@@ -65,8 +65,8 @@
         /**
          * _initiated
          *
-         * @var    boolean
-         * @access protected
+         * @var     boolean
+         * @access  protected
          * @static
          */
         protected static $_initiated = false;
@@ -75,10 +75,10 @@
          * _getResource
          *
          * @static
-         * @access protected
-         * @param  string $type
-         * @param  false|string $id (default: false)
-         * @return CS_REST_Subscribers|
+         * @access  protected
+         * @param   string $type
+         * @param   false|string $id (default: false)
+         * @return  CS_REST_Subscribers|
          */
         protected static function _getResource($type, $id = false)
         {
@@ -98,10 +98,10 @@
          * _getList
          *
          * @static
-         * @access protected
-         * @param  string|array $key
-         * @param  string $type (default: 'lists')
-         * @return string
+         * @access  protected
+         * @param   string|array $key
+         * @param   string $type (default: 'lists')
+         * @return  string
          */
         protected static function _getList($key, $type = 'lists')
         {
@@ -118,10 +118,10 @@
          * _format
          *
          * @static
-         * @access protected
-         * @param  array $subscriber
-         * @param  boolean $resubscribe (default: true)
-         * @return array
+         * @access  protected
+         * @param   array $subscriber
+         * @param   boolean $resubscribe (default: true)
+         * @return  array
          */
         protected static function _format(
             array $subscriber,
@@ -134,7 +134,7 @@
             if (isset($subscriber['custom'])) {
                 $formatted['CustomFields'] = array();
                 foreach ($subscriber['custom'] as $key => $value) {
-                    if (is_array($value)) {
+                    if (is_array($value) === true) {
                         foreach ($value as $subvalue) {
                             $formatted['CustomFields'][] = array(
                                 'Key' => $key,
@@ -170,10 +170,10 @@
          * @note   201 status check is because CM sends a 201 upon successful
          *         addition of an email address
          * @static
-         * @access protected
-         * @param  string $id
-         * @param  array $subscriber
-         * @return false|CS_REST_Wrapper_Result
+         * @access  protected
+         * @param   string $id
+         * @param   array $subscriber
+         * @return  false|CS_REST_Wrapper_Result
          */
         protected static function _add($id, array $subscriber)
         {
@@ -195,11 +195,11 @@
          * _details
          *
          * @static
-         * @access protected
-         * @param  string $id
-         * @param  string $email
-         * @param  boolean $verbose (default: true)
-         * @return false|CS_REST_Wrapper_Result
+         * @access  protected
+         * @param   string $id
+         * @param   string $email
+         * @param   boolean $verbose (default: true)
+         * @return  false|CS_REST_Wrapper_Result
          */
         protected static function _details($id, $email, $verbose = true)
         {
@@ -227,12 +227,12 @@
          * @note   201 status check is because CM sends a 201 upon successful
          *         addition of an email address
          * @static
-         * @access protected
-         * @param  string $id
-         * @param  array $subscribers
-         * @param  boolean $resubscribe
-         * @param  boolean $queueSubscriptionBasedAutoResponders
-         * @return false|CS_REST_Wrapper_Result
+         * @access  protected
+         * @param   string $id
+         * @param   array $subscribers
+         * @param   boolean $resubscribe
+         * @param   boolean $queueSubscriptionBasedAutoResponders
+         * @return  false|CS_REST_Wrapper_Result
          */
         protected static function _import(
             $id,
@@ -266,11 +266,11 @@
          * @note   200 status check is because CM sends a 201 upon successful
          *         addition of an email address
          * @static
-         * @access protected
-         * @param  string $id
-         * @param  string $email
-         * @param  boolean $verbose (default: true)
-         * @return false|CS_REST_Wrapper_Result
+         * @access  protected
+         * @param   string $id
+         * @param   string $email
+         * @param   boolean $verbose (default: true)
+         * @return  false|CS_REST_Wrapper_Result
          */
         protected static function _remove($id, $email, $verbose = true)
         {
@@ -298,11 +298,11 @@
          * @note   200 status check is because CM sends a 201 upon successful
          *         addition of an email address
          * @static
-         * @access protected
-         * @param  string $id
-         * @param  string $email
-         * @param  array $data
-         * @return false|CS_REST_Wrapper_Result
+         * @access  protected
+         * @param   string $id
+         * @param   string $email
+         * @param   array $data
+         * @return  false|CS_REST_Wrapper_Result
          */
         protected static function _send($id, $email, array $data)
         {
@@ -328,10 +328,10 @@
          * _suppress
          *
          * @static
-         * @access protected
-         * @param  string|array $emails
-         * @param  boolean $verbose (default: true)
-         * @return false|CS_REST_Wrapper_Result
+         * @access  protected
+         * @param   string|array $emails
+         * @param   boolean $verbose (default: true)
+         * @return  false|CS_REST_Wrapper_Result
          */
         protected static function _suppress($emails, $verbose = true)
         {
@@ -359,11 +359,11 @@
          * @note   200 status check is because CM sends a 201 upon successful
          *         addition of an email address
          * @static
-         * @access protected
-         * @param  string $id
-         * @param  string $email
-         * @param  boolean $verbose (default: true)
-         * @return false|CS_REST_Wrapper_Result
+         * @access  protected
+         * @param   string $id
+         * @param   string $email
+         * @param   boolean $verbose (default: true)
+         * @return  false|CS_REST_Wrapper_Result
          */
         protected static function _unsubscribe($id, $email, $verbose = true)
         {
@@ -387,10 +387,10 @@
          * _unsuppress
          *
          * @static
-         * @access protected
-         * @param  string $email
-         * @param  boolean $verbose (default: true)
-         * @return false|CS_REST_Wrapper_Result
+         * @access  protected
+         * @param   string $email
+         * @param   boolean $verbose (default: true)
+         * @return  false|CS_REST_Wrapper_Result
          */
         protected static function _unsuppress($email, $verbose = true)
         {
@@ -418,11 +418,11 @@
          * @note   200 status check is because CM sends a 200 upon successful
          *         update of an email address
          * @static
-         * @access protected
-         * @param  string $id
-         * @param  string $email
-         * @param  array $subscriber
-         * @return false|CS_REST_Wrapper_Result
+         * @access  protected
+         * @param   string $id
+         * @param   string $email
+         * @param   array $subscriber
+         * @return  false|CS_REST_Wrapper_Result
          */
         protected static function _update($id, $email, array $subscriber)
         {
@@ -444,10 +444,10 @@
          * add
          *
          * @static
-         * @access public
-         * @param  string|array $key
-         * @param  array $subscriber
-         * @return false|CS_REST_Wrapper_Result
+         * @access  public
+         * @param   string|array $key
+         * @param   array $subscriber
+         * @return  false|CS_REST_Wrapper_Result
          */
         public static function add($key, array $subscriber)
         {
@@ -468,11 +468,11 @@
          * details
          *
          * @static
-         * @access public
-         * @param  string|array $key
-         * @param  string $email
-         * @param  boolean $verbose (default: true)
-         * @return false|CS_REST_Wrapper_Result
+         * @access  public
+         * @param   string|array $key
+         * @param   string $email
+         * @param   boolean $verbose (default: true)
+         * @return  false|CS_REST_Wrapper_Result
          */
         public static function details($key, $email, $verbose = true)
         {
@@ -491,12 +491,12 @@
          * import
          *
          * @static
-         * @access public
-         * @param  string|array $key
-         * @param  array $subscribers
-         * @param  boolean $resubscribe (default: true)
-         * @param  boolean $queueSubscriptionBasedAutoResponders (default: false)
-         * @return false|CS_REST_Wrapper_Result
+         * @access  public
+         * @param   string|array $key
+         * @param   array $subscribers
+         * @param   boolean $resubscribe (default: true)
+         * @param   boolean $queueSubscriptionBasedAutoResponders (default: false)
+         * @return  false|CS_REST_Wrapper_Result
          */
         public static function import(
             $key,
@@ -526,9 +526,9 @@
         /**
          * init
          * 
-         * @access public
+         * @access  public
          * @static
-         * @return void
+         * @return  void
          */
         public static function init()
         {
@@ -542,11 +542,11 @@
          * remove
          *
          * @static
-         * @access public
-         * @param  string|array $key
-         * @param  string $email
-         * @param  boolean $verbose (default: true)
-         * @return false|CS_REST_Wrapper_Result
+         * @access  public
+         * @param   string|array $key
+         * @param   string $email
+         * @param   boolean $verbose (default: true)
+         * @return  false|CS_REST_Wrapper_Result
          */
         public static function remove($key, $email, $verbose = true)
         {
@@ -564,11 +564,11 @@
         /**
          * send
          * 
-         * @access public
-         * @param  string|array $key
-         * @param  string $email
-         * @param  array $data (default: array())
-         * @return false|CS_REST_Wrapper_Result
+         * @access  public
+         * @param   string|array $key
+         * @param   string $email
+         * @param   array $data (default: array())
+         * @return  false|CS_REST_Wrapper_Result
          */
         public static function send($key, $email, array $data = array())
         {
@@ -586,9 +586,9 @@
         /**
          * setConfigPath
          * 
-         * @access public
-         * @param  string $path
-         * @return void
+         * @access  public
+         * @param   string $path
+         * @return  void
          */
         public static function setConfigPath($path)
         {
@@ -599,10 +599,10 @@
          * subscribe
          *
          * @static
-         * @access public
-         * @param  string $email
-         * @param  boolean $verbose (default: true)
-         * @return false|CS_REST_Wrapper_Result
+         * @access  public
+         * @param   string $email
+         * @param   boolean $verbose (default: true)
+         * @return  false|CS_REST_Wrapper_Result
          */
         public static function subscribe($email, $verbose = true)
         {
@@ -620,10 +620,10 @@
          * suppress
          *
          * @static
-         * @access public
-         * @param  string $email
-         * @param  boolean $verbose (default: true)
-         * @return false|CS_REST_Wrapper_Result
+         * @access  public
+         * @param   string $email
+         * @param   boolean $verbose (default: true)
+         * @return  false|CS_REST_Wrapper_Result
          */
         public static function suppress($email, $verbose = true)
         {
@@ -641,11 +641,11 @@
          * unsubscribe
          *
          * @static
-         * @access public
-         * @param  string|array $key
-         * @param  string $email
-         * @param  boolean $verbose (default: true)
-         * @return false|CS_REST_Wrapper_Result
+         * @access  public
+         * @param   string|array $key
+         * @param   string $email
+         * @param   boolean $verbose (default: true)
+         * @return  false|CS_REST_Wrapper_Result
          */
         public static function unsubscribe($key, $email, $verbose = true)
         {
@@ -664,10 +664,10 @@
          * unsuppress
          *
          * @static
-         * @access public
-         * @param  string $email
-         * @param  boolean $verbose (default: true)
-         * @return false|CS_REST_Wrapper_Result
+         * @access  public
+         * @param   string $email
+         * @param   boolean $verbose (default: true)
+         * @return  false|CS_REST_Wrapper_Result
          */
         public static function unsuppress($email, $verbose = true)
         {
@@ -685,12 +685,12 @@
          * update
          *
          * @static
-         * @access public
-         * @param  string|array $key
-         * @param  string $email
-         * @param  array $subscriber
-         * @param  boolean $resubscribe (default: true)
-         * @return false|CS_REST_Wrapper_Result
+         * @access  public
+         * @param   string|array $key
+         * @param   string $email
+         * @param   array $subscriber
+         * @param   boolean $resubscribe (default: true)
+         * @return  false|CS_REST_Wrapper_Result
          */
         public static function update(
             $key,
@@ -719,8 +719,8 @@
          * the case.
          *
          * @static
-         * @access public
-         * @return void
+         * @access  public
+         * @return  void
          */
         public static function webhooks()
         {
@@ -749,6 +749,6 @@
     $info = pathinfo(__DIR__);
     $parent = ($info['dirname']) . '/' . ($info['basename']);
     $configPath = ($parent) . '/config.inc.php';
-    if (is_file($configPath)) {
+    if (is_file($configPath) === true) {
         CampaignMonitor::setConfigPath($configPath);
     }
