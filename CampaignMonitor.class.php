@@ -165,10 +165,10 @@
         /**
          * _add
          *
-         * @note   The set_error_handler and retore_error_handler calls below
-         *         should allow the application logic to flow uninterrupted
-         * @note   201 status check is because CM sends a 201 upon successful
-         *         addition of an email address
+         * @note    The set_error_handler and retore_error_handler calls below
+         *          should allow the application logic to flow uninterrupted
+         * @note    201 status check is because CM sends a 201 upon successful
+         *          addition of an email address
          * @static
          * @access  protected
          * @param   string $id
@@ -222,10 +222,10 @@
         /**
          * _import
          *
-         * @note   The set_error_handler and retore_error_handler calls below
-         *         should allow the application logic to flow uninterrupted
-         * @note   201 status check is because CM sends a 201 upon successful
-         *         addition of an email address
+         * @note    The set_error_handler and retore_error_handler calls below
+         *          should allow the application logic to flow uninterrupted
+         * @note    201 status check is because CM sends a 201 upon successful
+         *          addition of an email address
          * @static
          * @access  protected
          * @param   string $id
@@ -261,10 +261,10 @@
         /**
          * _remove
          *
-         * @note   The set_error_handler and retore_error_handler calls below
-         *         should allow the application logic to flow uninterrupted
-         * @note   200 status check is because CM sends a 201 upon successful
-         *         addition of an email address
+         * @note    The set_error_handler and retore_error_handler calls below
+         *          should allow the application logic to flow uninterrupted
+         * @note    200 status check is because CM sends a 201 upon successful
+         *          addition of an email address
          * @static
          * @access  protected
          * @param   string $id
@@ -293,10 +293,10 @@
         /**
          * _send
          *
-         * @note   The set_error_handler and retore_error_handler calls below
-         *         should allow the application logic to flow uninterrupted
-         * @note   200 status check is because CM sends a 201 upon successful
-         *         addition of an email address
+         * @note    The set_error_handler and retore_error_handler calls below
+         *          should allow the application logic to flow uninterrupted
+         * @note    200 status check is because CM sends a 201 upon successful
+         *          addition of an email address
          * @static
          * @access  protected
          * @param   string $id
@@ -354,10 +354,10 @@
         /**
          * _unsubscribe
          *
-         * @note   The set_error_handler and retore_error_handler calls below
-         *         should allow the application logic to flow uninterrupted
-         * @note   200 status check is because CM sends a 201 upon successful
-         *         addition of an email address
+         * @note    The set_error_handler and retore_error_handler calls below
+         *          should allow the application logic to flow uninterrupted
+         * @note    200 status check is because CM sends a 201 upon successful
+         *          addition of an email address
          * @static
          * @access  protected
          * @param   string $id
@@ -413,10 +413,10 @@
         /**
          * _update
          *
-         * @note   The set_error_handler and retore_error_handler calls below
-         *         should allow the application logic to flow uninterrupted
-         * @note   200 status check is because CM sends a 200 upon successful
-         *         update of an email address
+         * @note    The set_error_handler and retore_error_handler calls below
+         *          should allow the application logic to flow uninterrupted
+         * @note    200 status check is because CM sends a 200 upon successful
+         *          update of an email address
          * @static
          * @access  protected
          * @param   string $id
