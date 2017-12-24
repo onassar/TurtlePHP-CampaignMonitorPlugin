@@ -78,7 +78,7 @@
          * @access  protected
          * @param   string $type
          * @param   false|string $id (default: false)
-         * @return  CS_REST_Subscribers|
+         * @return  CS_REST_Transactional_SmartEmail|CS_REST_Clients|CS_REST_Subscribers
          */
         protected static function _getResource($type, $id = false)
         {
