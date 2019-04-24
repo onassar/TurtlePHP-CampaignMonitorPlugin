@@ -56,8 +56,8 @@
         /**
          * _configPath
          *
-         * @var     string
          * @access  protected
+         * @var     string
          * @static
          */
         protected static $_configPath = 'config.default.inc.php';
@@ -65,8 +65,8 @@
         /**
          * _initiated
          *
-         * @var     boolean
          * @access  protected
+         * @var     bool
          * @static
          */
         protected static $_initiated = false;
@@ -120,7 +120,7 @@
          * @static
          * @access  protected
          * @param   array $subscriber
-         * @param   boolean $resubscribe (default: true)
+         * @param   bool $resubscribe (default: true)
          * @return  array
          */
         protected static function _format(
@@ -198,7 +198,7 @@
          * @access  protected
          * @param   string $id
          * @param   string $email
-         * @param   boolean $verbose (default: true)
+         * @param   bool $verbose (default: true)
          * @return  false|CS_REST_Wrapper_Result
          */
         protected static function _details($id, $email, $verbose = true)
@@ -230,8 +230,8 @@
          * @access  protected
          * @param   string $id
          * @param   array $subscribers
-         * @param   boolean $resubscribe
-         * @param   boolean $queueSubscriptionBasedAutoResponders
+         * @param   bool $resubscribe
+         * @param   bool $queueSubscriptionBasedAutoResponders
          * @return  false|CS_REST_Wrapper_Result
          */
         protected static function _import(
@@ -269,7 +269,7 @@
          * @access  protected
          * @param   string $id
          * @param   string $email
-         * @param   boolean $verbose (default: true)
+         * @param   bool $verbose (default: true)
          * @return  false|CS_REST_Wrapper_Result
          */
         protected static function _remove($id, $email, $verbose = true)
@@ -330,7 +330,7 @@
          * @static
          * @access  protected
          * @param   string|array $emails
-         * @param   boolean $verbose (default: true)
+         * @param   bool $verbose (default: true)
          * @return  false|CS_REST_Wrapper_Result
          */
         protected static function _suppress($emails, $verbose = true)
@@ -362,7 +362,7 @@
          * @access  protected
          * @param   string $id
          * @param   string $email
-         * @param   boolean $verbose (default: true)
+         * @param   bool $verbose (default: true)
          * @return  false|CS_REST_Wrapper_Result
          */
         protected static function _unsubscribe($id, $email, $verbose = true)
@@ -389,7 +389,7 @@
          * @static
          * @access  protected
          * @param   string $email
-         * @param   boolean $verbose (default: true)
+         * @param   bool $verbose (default: true)
          * @return  false|CS_REST_Wrapper_Result
          */
         protected static function _unsuppress($email, $verbose = true)
@@ -471,7 +471,7 @@
          * @access  public
          * @param   string|array $key
          * @param   string $email
-         * @param   boolean $verbose (default: true)
+         * @param   bool $verbose (default: true)
          * @return  false|CS_REST_Wrapper_Result
          */
         public static function details($key, $email, $verbose = true)
@@ -494,8 +494,8 @@
          * @access  public
          * @param   string|array $key
          * @param   array $subscribers
-         * @param   boolean $resubscribe (default: true)
-         * @param   boolean $queueSubscriptionBasedAutoResponders (default: false)
+         * @param   bool $resubscribe (default: true)
+         * @param   bool $queueSubscriptionBasedAutoResponders (default: false)
          * @return  false|CS_REST_Wrapper_Result
          */
         public static function import(
@@ -545,7 +545,7 @@
          * @access  public
          * @param   string|array $key
          * @param   string $email
-         * @param   boolean $verbose (default: true)
+         * @param   bool $verbose (default: true)
          * @return  false|CS_REST_Wrapper_Result
          */
         public static function remove($key, $email, $verbose = true)
@@ -601,7 +601,7 @@
          * @static
          * @access  public
          * @param   string $email
-         * @param   boolean $verbose (default: true)
+         * @param   bool $verbose (default: true)
          * @return  false|CS_REST_Wrapper_Result
          */
         public static function subscribe($email, $verbose = true)
@@ -622,7 +622,7 @@
          * @static
          * @access  public
          * @param   string $email
-         * @param   boolean $verbose (default: true)
+         * @param   bool $verbose (default: true)
          * @return  false|CS_REST_Wrapper_Result
          */
         public static function suppress($email, $verbose = true)
@@ -644,7 +644,7 @@
          * @access  public
          * @param   string|array $key
          * @param   string $email
-         * @param   boolean $verbose (default: true)
+         * @param   bool $verbose (default: true)
          * @return  false|CS_REST_Wrapper_Result
          */
         public static function unsubscribe($key, $email, $verbose = true)
@@ -666,7 +666,7 @@
          * @static
          * @access  public
          * @param   string $email
-         * @param   boolean $verbose (default: true)
+         * @param   bool $verbose (default: true)
          * @return  false|CS_REST_Wrapper_Result
          */
         public static function unsuppress($email, $verbose = true)
@@ -689,7 +689,7 @@
          * @param   string|array $key
          * @param   string $email
          * @param   array $subscriber
-         * @param   boolean $resubscribe (default: true)
+         * @param   bool $resubscribe (default: true)
          * @return  false|CS_REST_Wrapper_Result
          */
         public static function update(
