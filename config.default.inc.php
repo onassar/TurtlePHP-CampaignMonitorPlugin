@@ -7,30 +7,34 @@
     namespace Plugin\CampaignMonitor;
 
     /**
-     * Data
+     * Plugin Config Data
      * 
      */
 
     // API credentials
-    $credentials = array(
-        'apiKey' => '***',
+    $apiKey = '***';
+    $clientId = '***';
+    $credentials = compact('apiKey', 'clientId');
+
+    // Transactional emails
+    $emails = array(
+        'shortcutKey' => '***'
     );
 
     // Lists
-    $lists = array(
-        'all' => 'abcd'
+    $lists = array();
+        'shortcutKey' => '***'
     );
+
+    // Webhooks
+    $webhooks = array();
+
+    // Compact
+    $pluginConfigData = compact('credentials', 'emails', 'lists', 'webhooks');
 
     /**
-     * Config storage
+     * Storage
      * 
      */
-
-    // Store
-    \Plugin\Config::add(
-        'TurtlePHP-CampaignMonitorPlugin',
-        array(
-            'credentials' => $credentials,
-            'lists' => $lists
-        )
-    );
+    $key = 'TurtlePHP-CampaignMonitorPlugin';
+    \Plugin\Config::add($key, $pluginConfigData);
