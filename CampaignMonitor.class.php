@@ -82,7 +82,7 @@
          */
         protected static function _getResource($type, $id = false)
         {
-            $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
+            $config = \Plugin\Config::retrieve('TurtlePHP-CampaignMonitorPlugin');
             $apiKey = $config['credentials']['apiKey'];
             $clientId = $config['credentials']['clientId'];
             $auth = array('api_key' => $apiKey);
@@ -105,7 +105,7 @@
          */
         protected static function _getList($key, $type = 'lists')
         {
-            $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
+            $config = \Plugin\Config::retrieve('TurtlePHP-CampaignMonitorPlugin');
             $lists = $config[$type];
             foreach ((array) $key as $sub) {
                 $id = $lists[$sub];
@@ -724,7 +724,7 @@
          */
         public static function webhooks()
         {
-            $config = getConfig('TurtlePHP-CampaignMonitorPlugin');
+            $config = \Plugin\Config::retrieve('TurtlePHP-CampaignMonitorPlugin');
             $collection = $config['webhooks'];
             $key = $config['credentials']['apiKey'];
             $auth = array('api_key' => $key);
