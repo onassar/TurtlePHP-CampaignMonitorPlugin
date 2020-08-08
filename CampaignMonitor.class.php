@@ -55,7 +55,7 @@
     {
         /**
          * _configPath
-         *
+         * 
          * @access  protected
          * @var     string
          * @static
@@ -64,7 +64,7 @@
 
         /**
          * _initiated
-         *
+         * 
          * @access  protected
          * @var     bool
          * @static
@@ -73,7 +73,7 @@
 
         /**
          * _getResource
-         *
+         * 
          * @static
          * @access  protected
          * @param   string $type
@@ -96,7 +96,7 @@
 
         /**
          * _getList
-         *
+         * 
          * @static
          * @access  protected
          * @param   string|array $key
@@ -116,7 +116,7 @@
 
         /**
          * _format
-         *
+         * 
          * @static
          * @access  protected
          * @param   array $subscriber
@@ -164,7 +164,7 @@
 
         /**
          * _add
-         *
+         * 
          * @note    The set_error_handler and retore_error_handler calls below
          *          should allow the application logic to flow uninterrupted
          * @note    201 status check is because CM sends a 201 upon successful
@@ -193,7 +193,7 @@
 
         /**
          * _details
-         *
+         * 
          * @static
          * @access  protected
          * @param   string $id
@@ -221,7 +221,7 @@
 
         /**
          * _import
-         *
+         * 
          * @note    The set_error_handler and retore_error_handler calls below
          *          should allow the application logic to flow uninterrupted
          * @note    201 status check is because CM sends a 201 upon successful
@@ -260,7 +260,7 @@
 
         /**
          * _remove
-         *
+         * 
          * @note    The set_error_handler and retore_error_handler calls below
          *          should allow the application logic to flow uninterrupted
          * @note    200 status check is because CM sends a 201 upon successful
@@ -292,7 +292,7 @@
 
         /**
          * _send
-         *
+         * 
          * @note    The set_error_handler and retore_error_handler calls below
          *          should allow the application logic to flow uninterrupted
          * @note    200 status check is because CM sends a 201 upon successful
@@ -326,7 +326,7 @@
 
         /**
          * _suppress
-         *
+         * 
          * @static
          * @access  protected
          * @param   string|array $emails
@@ -353,7 +353,7 @@
 
         /**
          * _unsubscribe
-         *
+         * 
          * @note    The set_error_handler and retore_error_handler calls below
          *          should allow the application logic to flow uninterrupted
          * @note    200 status check is because CM sends a 201 upon successful
@@ -385,7 +385,7 @@
 
         /**
          * _unsuppress
-         *
+         * 
          * @static
          * @access  protected
          * @param   string $email
@@ -412,7 +412,7 @@
 
         /**
          * _update
-         *
+         * 
          * @note    The set_error_handler and retore_error_handler calls below
          *          should allow the application logic to flow uninterrupted
          * @note    200 status check is because CM sends a 200 upon successful
@@ -442,7 +442,7 @@
 
         /**
          * add
-         *
+         * 
          * @static
          * @access  public
          * @param   string|array $key
@@ -466,7 +466,7 @@
 
         /**
          * details
-         *
+         * 
          * @static
          * @access  public
          * @param   string|array $key
@@ -489,7 +489,7 @@
 
         /**
          * import
-         *
+         * 
          * @static
          * @access  public
          * @param   string|array $key
@@ -540,7 +540,7 @@
 
         /**
          * remove
-         *
+         * 
          * @static
          * @access  public
          * @param   string|array $key
@@ -597,7 +597,7 @@
 
         /**
          * subscribe
-         *
+         * 
          * @static
          * @access  public
          * @param   string $email
@@ -618,7 +618,7 @@
 
         /**
          * suppress
-         *
+         * 
          * @static
          * @access  public
          * @param   string $email
@@ -639,7 +639,7 @@
 
         /**
          * unsubscribe
-         *
+         * 
          * @static
          * @access  public
          * @param   string|array $key
@@ -662,7 +662,7 @@
 
         /**
          * unsuppress
-         *
+         * 
          * @static
          * @access  public
          * @param   string $email
@@ -683,7 +683,7 @@
 
         /**
          * update
-         *
+         * 
          * @static
          * @access  public
          * @param   string|array $key
@@ -712,12 +712,12 @@
 
         /**
          * webhooks
-         *
+         * 
          * Loops over webhooks and removes any previously added. Then adds those
          * stored in config. I check for an empty response because when CM is
          * down, response is empty. So don't do anything drastic when that is
          * the case.
-         *
+         * 
          * @static
          * @access  public
          * @return  void
