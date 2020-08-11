@@ -1,12 +1,6 @@
 <?php
 
     /**
-     * Namespace
-     * 
-     */
-    namespace Plugin\CampaignMonitor;
-
-    /**
      * Plugin Config Data
      * 
      */
@@ -37,4 +31,4 @@
      * 
      */
     $key = 'TurtlePHP-CampaignMonitorPlugin';
-    \Plugin\Config::add($key, $pluginConfigData);
+    TurtlePHP\Plugin\Config::set($key, $pluginConfigData);

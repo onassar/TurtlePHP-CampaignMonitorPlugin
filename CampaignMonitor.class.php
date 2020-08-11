@@ -1,10 +1,10 @@
 <?php
 
     // namespace
-    namespace Plugin;
+    namespace TurtlePHP\Plugin;
 
     // dependency check
-    if (class_exists('\\Plugin\\Config') === false) {
+    if (class_exists('\\TurtlePHP\Plugin\\Config') === false) {
         throw new \Exception(
             '*Config* class required. Please see ' .
             'https://github.com/onassar/TurtlePHP-ConfigPlugin'
@@ -82,7 +82,7 @@
          */
         protected static function _getResource($type, $id = false)
         {
-            $config = \Plugin\Config::retrieve('TurtlePHP-CampaignMonitorPlugin');
+            $config = \TurtlePHP\Plugin\Config::get('TurtlePHP-CampaignMonitorPlugin');
             $apiKey = $config['credentials']['apiKey'];
             $clientId = $config['credentials']['clientId'];
             $auth = array('api_key' => $apiKey);
@@ -105,7 +105,7 @@
          */
         protected static function _getList($key, $type = 'lists')
         {
-            $config = \Plugin\Config::retrieve('TurtlePHP-CampaignMonitorPlugin');
+            $config = \TurtlePHP\Plugin\Config::get('TurtlePHP-CampaignMonitorPlugin');
             $lists = $config[$type];
             foreach ((array) $key as $sub) {
                 $id = $lists[$sub];
@@ -724,7 +724,7 @@
          */
         public static function webhooks()
         {
-            $config = \Plugin\Config::retrieve('TurtlePHP-CampaignMonitorPlugin');
+            $config = \TurtlePHP\Plugin\Config::get('TurtlePHP-CampaignMonitorPlugin');
             $collection = $config['webhooks'];
             $key = $config['credentials']['apiKey'];
             $auth = array('api_key' => $key);
