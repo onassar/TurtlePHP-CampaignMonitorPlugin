@@ -4,7 +4,7 @@
     namespace TurtlePHP\Plugin;
 
     // dependency check
-    if (class_exists('\\TurtlePHP\Plugin\\Config') === false) {
+    if (class_exists('\\TurtlePHP\\Plugin\\Config') === false) {
         throw new \Exception(
             '*Config* class required. Please see ' .
             'https://github.com/onassar/TurtlePHP-ConfigPlugin'
